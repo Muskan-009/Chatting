@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:chatting/helper/dialogs.dart';
 import 'package:chatting/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';

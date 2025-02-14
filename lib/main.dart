@@ -1,9 +1,6 @@
-import 'package:chatting/screens/home_screen.dart';
-import 'package:chatting/screens/splash_Screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:chatting/screens/auth/login_Screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 late Size mq;
 void main() {
