@@ -5,8 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../../main.dart';
-
 class loginScreen extends StatefulWidget {
   const loginScreen({super.key});
 
@@ -16,7 +14,9 @@ class loginScreen extends StatefulWidget {
 
 class _loginScreenState extends State<loginScreen> {
   bool isAnimate = false;
+  late Size mq;
 
+  @override
   void initState() {
     super.initState();
     Future.delayed(Duration(milliseconds: 500), () {
@@ -26,67 +26,27 @@ class _loginScreenState extends State<loginScreen> {
     });
   }
 
-  handlelogin() {
+  handleLogin() async {
     Dialogs.showProgressbar(context);
-    _signInWithGoogle().then((user) {
-      print("bhee$user");
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => const HomeScreen()));
-    });
+
+    try {
+      User? user = await _signInWithGoogle();
+
+      if (user != null) {
+        print("Logged in user: $user");
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+      } else {
+        print("Login failed, user is null");
+        Dialogs.ShowSnakbar(context, "Login failed. Please try again.");
+      }
+    } catch (e) {
+      print("Error during sign-in: $e");
+      Dialogs.ShowSnakbar(context, "Error during sign-in: $e");
+    } finally {
+      Navigator.of(context).pop();
+    }
   }
-
-  // Future<UserCredential> _signInWithGoogle() async {
-  //   try {
-  //     print("signiiwiiwiiwi workin");
-
-  //     await InternetAddress.lookup('google.com');
-
-  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //     if (googleUser == null) {
-  //       throw FirebaseAuthException(
-  //         code: 'ERROR_ABORTED_BY_USER',
-  //         message: 'Sign-in was aborted by the user.',
-  //       );
-  //     }
-
-  //     print("Google user signed in: $googleUser");
-
-  //     final GoogleSignInAuthentication? googleAuth =
-  //         await googleUser.authentication;
-
-  //     if (googleAuth == null) {
-  //       throw FirebaseAuthException(
-  //         code: 'ERROR_GOOGLE_AUTH_FAILED',
-  //         message: 'Google authentication failed.',
-  //       );
-  //     }
-  //     final credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth.accessToken,
-  //       idToken: googleAuth.idToken,
-  //     );
-
-  //     return await FirebaseAuth.instance.signInWithCredential(credential);
-  //   } catch (e) {
-  //     Dialogs.ShowSnakbar(context , "");
-  //     print("Error during Google Sign-In: $e");
-  //     if (e is FirebaseAuthException) {
-  //       throw FirebaseAuthException(
-  //         code: e.code,
-  //         message: e.message,
-  //       );
-  //     } else if (e is SocketException) {
-  //       throw FirebaseAuthException(
-  //         code: 'ERROR_NO_INTERNET',
-  //         message: 'No internet connection.',
-  //       );
-  //     } else {
-  //       throw FirebaseAuthException(
-  //         code: 'ERROR_UNKNOWN',
-  //         message: 'An unknown error occurred.',
-  //       );
-  //     }
-  //   }
-  // }
 
   Future<User?> _signInWithGoogle() async {
     try {
@@ -138,7 +98,7 @@ class _loginScreenState extends State<loginScreen> {
                   backgroundColor: const Color.fromARGB(255, 223, 255, 186),
                   shape: StadiumBorder()),
               onPressed: () {
-                handlelogin();
+                handleLogin();
               },
               icon: Image.asset(
                 'assets/google.png',
